@@ -9,7 +9,7 @@ ops = {
 
 class Int:
     def __init__(self):
-        self.val = -1 
+        self.val = -99 
     
     def set(self, x):
         self.val = int(x)
@@ -31,9 +31,7 @@ def make(cmd):
 
     if lt == 1:
         if t[0].isdecimal():
-            f = Int()
-            f.set(t[0])
-            print(f.get())
+            f = setDecInt(target, t[0])
         else:
             f = getRef(t[0])
     elif lt == 2:
@@ -57,19 +55,33 @@ def make(cmd):
             t[2] = tmp
 
         f =  [t[1], t[0], t[2]]
-        print(f"{target} = {f}")
+      #  print(f"{target} = {f}")
     
     gates[target] = f
 
-def getRef(x):
+def getRef(g):
     global gates
     try:
-        f = gates[x].get()
+        f = gates[g].get()
     except:
-        gates[x] = Int().set(-1)
+        gates[g] = Int()
+        gates[g].set(-1)
     finally:
-        f = gates[x]
+        f = gates[g]
     return f
+
+def setDecInt(g, i):
+    global gates
+    try:
+        if gates[g].get() == -1:
+            gates[g].set(i)
+    except:
+        print(f"neu {g}={i}")
+        gates[g] = Int()
+        gates[g].set(i)
+
+    return gates[g]
+
 
 gates = {}
 
@@ -77,9 +89,9 @@ def evg(g):
     if type(g) == Int:
         return g.get()
 
-    return ops[g[0]](g[1].get(), g[2].get()) & ((1<<16)-1)
+    return ops[g[0]](g[1].get(), g[2].get())+2**16  # & ((1<<16)-1)
 
-with open("input.debug") as data:
+with open("input.txt") as data:
     for line in data:
        #gates[line.split(" -> ")[1]] = Gate(line)
        make(line)
@@ -88,12 +100,35 @@ with open("input.debug") as data:
 for gate in gates:
     g = gates[gate]
     try:
-        print(f"{gate} = {g[0]} {g[1]} {g[2]}")
-        print(f"{gate} = {g[0]} {type(g[1])} {type(g[2])}")
+        pass
+       # print(f"{gate} = {g[0]} {g[1]} {g[2]}")
+        #print(f"{gate} = {g[0]} {g[1]}={type(g[1])} {g[2]}={type(g[2])}")
     except:
-        print(gate)
+       # print(gate)
+       pass
 
-    
+res = {}
+gatesTE = list(gates.keys())
+
 print("\nEval")
-for g in gates:
-    print(f"{g}: {evg(gates[g])}")
+
+def main(): 
+    global res, gates, gatesTE
+    while len(gatesTE) > 0:
+        print(len(gatesTE))
+        for g in gatesTE:
+            r = evg(gates[g])
+            if r == -1:
+                continue
+            res[g] = r
+            print(gatesTE.remove(g))
+
+        for r in res:
+            gates[r] = res[r]
+main()
+
+
+
+
+
+
