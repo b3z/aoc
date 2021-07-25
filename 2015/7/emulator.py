@@ -1,6 +1,6 @@
 
 ops = {
-    "NOT"       : lambda x, y : ~x, # takes two args, only the first is evaluated
+    "NOT"       : lambda x, y : ~x & (1<<16)-1, # takes two args, only the first is evaluated
     "AND"       : lambda x, y : x & y,
     "OR"        : lambda x, y : x | y,
     "RSHIFT"    : lambda x, y : x >> y,
@@ -20,7 +20,6 @@ class Int:
     def __str__(self):
         return f"{self.val}"
 
-
 def make(cmd):
     global gates
     tmp = cmd.split(" -> ")
@@ -31,24 +30,39 @@ def make(cmd):
 
     if lt == 1:
         if t[0].isdecimal():
-            f = setDecInt(target, t[0])
+            f = Int()
+            f.set(t[0])
         else:
-            f = getRef(t[0])
+            if checkRef(t[0]):
+                f = t[0]
+            else:
+                return False # Reference not exisiting yet
     elif lt == 2:
         if t[1].isdecimal():
-            f = [t[0], Int().set(t[1]), Int()]
+            k = Int()
+            k.set(t[1])
+            f = [t[0], k, Int()]
         else:
-            f = [t[0], getRef(t[1]), Int()]
+            if checkRef(t[1]):
+                f = [t[0], t[1], Int()]
+            else:
+                return False# no ref
     else:
         if t[0].isdecimal() is not True:
-            t[0] = getRef(t[0])
+            if checkRef(t[0]):
+                pass
+            else:
+                return False
         else:
             tmp = Int()
             tmp.set(t[0])
             t[0] = tmp
 
         if t[2].isdecimal() is not True:
-            t[2] = getRef(t[2])
+            if checkRef(t[2]):
+                pass
+            else:
+                return False
         else:
             tmp = Int()
             tmp.set(t[2])
@@ -58,77 +72,57 @@ def make(cmd):
       #  print(f"{target} = {f}")
     
     gates[target] = f
+    return True
 
-def getRef(g):
-    global gates
-    try:
-        f = gates[g].get()
-    except:
-        gates[g] = Int()
-        gates[g].set(-1)
-    finally:
-        f = gates[g]
-    return f
-
-def setDecInt(g, i):
-    global gates
-    try:
-        if gates[g].get() == -1:
-            gates[g].set(i)
-    except:
-        print(f"neu {g}={i}")
-        gates[g] = Int()
-        gates[g].set(i)
-
-    return gates[g]
-
+def checkRef(g):
+    if g in gates:
+        return True
+    else:
+        return False
 
 gates = {}
+res = {}
 
-def evg(g):
+def evg(t):
+    if t in res:
+        return res[t]
+
+    g = gates[t]
+
     if type(g) == Int:
         return g.get()
+    elif type(g) == str:
+        return evg(g)
+    else:
+        if type(g[1]) == Int:
+            x = g[1].get()
+        else:
+            x = evg(g[1])
 
-    return ops[g[0]](g[1].get(), g[2].get())+2**16  # & ((1<<16)-1)
+        if type(g[2]) == Int:
+             y = g[2].get()
+        else:
+            y = evg(g[2])
 
+        result = ops[g[0]](x, y)
+        res[t] = result
+        return result
+
+todo = [] # targets todo
 with open("input.txt") as data:
     for line in data:
-       #gates[line.split(" -> ")[1]] = Gate(line)
-       make(line)
+        if make(line) is False:
+            todo.append(line)
 
+while len(todo) > 0:
+    for line in todo:
+        if make(line):
+            todo.remove(line)
+        
+#for g in gates:
+#    print(f"{g} = {gates[g]}")
 
-for gate in gates:
-    g = gates[gate]
-    try:
-        pass
-       # print(f"{gate} = {g[0]} {g[1]} {g[2]}")
-        #print(f"{gate} = {g[0]} {g[1]}={type(g[1])} {g[2]}={type(g[2])}")
-    except:
-       # print(gate)
-       pass
+#for g in gates:
+#    print(f"{g} = {res[g]}")
 
-res = {}
-gatesTE = list(gates.keys())
-
-print("\nEval")
-
-def main(): 
-    global res, gates, gatesTE
-    while len(gatesTE) > 0:
-        print(len(gatesTE))
-        for g in gatesTE:
-            r = evg(gates[g])
-            if r == -1:
-                continue
-            res[g] = r
-            print(gatesTE.remove(g))
-
-        for r in res:
-            gates[r] = res[r]
-main()
-
-
-
-
-
-
+print(evg("a"))

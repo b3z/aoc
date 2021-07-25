@@ -1,0 +1,4 @@
+x AND y -> z
+100 -> x
+5 OR i -> y
+NOT 10 -> i
