@@ -28,6 +28,10 @@ def make(cmd):
     target = tmp[1].replace("\n", "")
     lt = len(t)
 
+    if t[0] == "b":
+        t[0] = "3176" # Part two override
+        print(f'override {t[0]}')
+
     if lt == 1:
         if t[0].isdecimal():
             f = Int()
