@@ -1,0 +1,10 @@
+import aocd as aoc
+
+data = aoc.get_data()
+# f = open("in")
+# l = f.readlines()
+
+
+
+# aoc.submit()
+
