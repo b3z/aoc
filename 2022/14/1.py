@@ -1,4 +1,5 @@
 # Incredibly slow solution.
+
 file = open("input").read().splitlines()
 
 grid = []
@@ -37,6 +38,8 @@ for line in file:
 
     grid += tmp
 
+grid = set(grid)
+
 # Simulate
 
 
@@ -68,6 +71,7 @@ while True:
     else:
         print(res)
         break
-    grid.append((xs, ys))
+    grid.add((xs, ys))
     res += 1
     xs, ys = sandStart
+

@@ -1,4 +1,7 @@
 # Incredibly slow solution. This solution took 54 min to compute. Lol.
+import datetime
+
+t = datetime.datetime.now()
 file = open("input").read().splitlines()
 
 grid = []
@@ -36,6 +39,8 @@ for line in file:
 
     grid += tmp
 
+grid = set(grid)
+
 # Simulate
 
 
@@ -70,6 +75,8 @@ while True:
     else:
         print(res+1)
         break
-    grid.append((xs, ys))
+    grid.add((xs, ys))
     res += 1
     xs, ys = sandStart
+
+print('Time to process:' ,datetime.datetime.now()-t)
