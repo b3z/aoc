@@ -1,27 +1,15 @@
-f = open(0).read().splitlines()
+res = 0
 
-sum = 0
-for l in f:
-    win, my = l.split(': ')[1].split(' | ')
+for l in open(0):
+    win, my = [list(map(str, r.split())) for r in l.split(": ")[1].strip().split(" | ")]
     t = 0
-    win = win.split(' ')
-    my = my.split(' ')
-    for w in win:
-        if w == '':
-            win.remove(w)
-    for m in my:
-        if m == '':
-            my.remove(m)
 
     for m in my:
         if m in win:
             if t == 0:
                 t = 1
             else:
-                t= 2*t
+                t *= 2
+    res += t
 
-    sum += t
-    t = 0
-
-print(sum)
-
+print(res)
