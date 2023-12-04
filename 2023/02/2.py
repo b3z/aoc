@@ -1,7 +1,7 @@
 from functools import reduce
 from operator import mul
 
-f = open("input")
+f = open(0)
 
 sum = 0
 

@@ -1,4 +1,4 @@
-f = open("input")
+f = open(0)
 
 sum = 0
 
