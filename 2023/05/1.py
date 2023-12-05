@@ -9,7 +9,7 @@ for s in seeds:
     for r in rules:
         for row in r:
             x, y, z = map(int, row.split())
-            if y <= s < y + z:
+            if s in range(y, y + z):
                 s = s - y + x
                 break
     res.append(s)
