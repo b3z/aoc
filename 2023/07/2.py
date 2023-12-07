@@ -27,19 +27,19 @@ def get_rank(cs, bid):
     val = sorted(new_ocs.values())
 
     if val == [5]:  # five of a kind
-        return (10, cs, bid)
-    elif val == [1, 4]:  # four of kind
-        return (9, cs, bid)
-    elif val == [2, 3]:  # full house
-        return (8, cs, bid)
-    elif val == [1, 1, 3]:  # three of a kind
         return (7, cs, bid)
-    elif val == [1, 2, 2]:  # two pairs
+    elif val == [1, 4]:  # four of kind
         return (6, cs, bid)
-    elif val == [1, 1, 1, 2]:  # one pair
+    elif val == [2, 3]:  # full house
         return (5, cs, bid)
-    elif val == [1, 1, 1, 1, 1]:  # high card
+    elif val == [1, 1, 3]:  # three of a kind
         return (4, cs, bid)
+    elif val == [1, 2, 2]:  # two pairs
+        return (3, cs, bid)
+    elif val == [1, 1, 1, 2]:  # one pair
+        return (2, cs, bid)
+    elif val == [1, 1, 1, 1, 1]:  # high card
+        return (1, cs, bid)
     else:
         print("Error")
         print(val)
